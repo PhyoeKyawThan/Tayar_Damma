@@ -52,4 +52,4 @@ List<BookItem> book_items = [
   )
 ];
 
-List<BookItem> recent_book_stack = [];
+// List<BookItem> recent_book_stack = [];

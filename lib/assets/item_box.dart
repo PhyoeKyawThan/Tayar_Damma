@@ -3,7 +3,7 @@ import 'package:damma/views/damma_book_view.dart';
 import 'package:flutter/material.dart';
 
 class ItemBox extends StatelessWidget {
-  final BookItem book;
+  final Map<String, dynamic> book;
   ItemBox({
     required this.book,
   });
@@ -36,7 +36,7 @@ class ItemBox extends StatelessWidget {
                         child: SizedBox(
                           width: 200,
                           child: Text(
-                            book.title,
+                            book["title"],
                             style: const TextStyle(
                               color: Colors.brown,
                               fontWeight: FontWeight.bold,
@@ -48,12 +48,17 @@ class ItemBox extends StatelessWidget {
                       ),
                       Row(
                         children: <Widget>[
-                          const Icon(Icons.access_time),
-                          Text(
-                            ': ${book.datetime.toString()}',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w700, fontSize: 10),
-                          )
+                          book["time"] == null
+                              ? const Icon(Icons.book_online)
+                              : const Icon(Icons.access_time),
+                          book["time"] != null
+                              ? Text(
+                                  ': ${book["time"].toString()}',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 10),
+                                )
+                              : Text('Aurthour: ')
                         ],
                       )
                     ],

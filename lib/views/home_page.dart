@@ -1,9 +1,39 @@
 import 'package:damma/assets/item_box.dart';
 import 'package:damma/assets/data_objects.dart';
 import 'package:damma/datas/test_data.dart';
+import 'package:damma/models/book_model.dart';
+import 'package:damma/models/recent_model.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqlite_api.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<Map<String, dynamic>> recent_opened_items = [];
+  Future<void> fetchRecent() async {
+    RecentModel model = RecentModel();
+    Database db = await model.connect();
+    List<Map<String, dynamic>> recent_items = [];
+    BookModel book_model = BookModel();
+    for (Map<String, dynamic> book in await model.getRecentBooks(db)) {
+      // Map<String, dynamic> book_ =  as Map<String, dynamic>;
+      recent_items.add(await book_model.getBookById(db, book["bookID"]));
+    }
+
+    setState(() {
+      recent_opened_items = recent_items;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchRecent();
+  }
+
   bool is_new_user = true;
   bool _have_opened = true;
 
@@ -11,7 +41,7 @@ class HomePage extends StatelessWidget {
       "dailyquote might change or is dynamically determined,\n remove const from the widget:";
   @override
   Widget build(BuildContext context) {
-    List<BookItem> recent_opened_items = recent_book_stack;
+    // test();
     // recent_opened_items.sort((f_book, s_book) => s_book.datetime!.compareTo(f_book.datetime!));
     return Center(
       child: Column(
