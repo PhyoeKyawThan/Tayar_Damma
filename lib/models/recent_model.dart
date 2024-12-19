@@ -5,9 +5,9 @@ class RecentModel {
     return await db.rawQuery("SELECT * FROM recent_items ORDER BY time DESC");
   }
 
-  Future<int> deleteRecent(Database db, String condition, int uniqueid) async {
+  Future<int> deleteRecent(Database db, int uniqueid) async {
     return await db
-        .delete("recent_items", where: condition, whereArgs: [uniqueid]);
+        .rawDelete("DELETE FROM recent_items WHERE id = ?", [uniqueid]);
   }
 
   Future<bool> addNewRecent(Database db, Map<String, dynamic> book) async {
@@ -15,12 +15,13 @@ class RecentModel {
     List<Map> exist_recent = await db
         .rawQuery("SELECT * FROM recent_items WHERE bookID = ?", [book["id"]]);
     if (exist_recent.isNotEmpty) {
-      await deleteRecent(db, " bookID = ?", book["id"]);
-      await db.insert("recent_items", { "bookID": book["id"] });
+      // await deleteRecent(db, " bookID = ?", book["id"]);
+      await updateRecent(db, book["id"] as int);
+      // await db.insert("recent_items", {"bookID": book["id"]});
       return true;
     }
     if (recentIds.length == 3) {
-      await deleteRecent(db, " id = ?", recentIds[recentIds.length]["id"]);
+      await deleteRecent(db, recentIds[recentIds.length - 1]["id"]);
       await db.insert("recent_items", {
         "bookID": book["id"],
       });
@@ -33,6 +34,11 @@ class RecentModel {
       return true;
     }
     return false;
+  }
+
+  Future<void> updateRecent(Database db, int recentId) async {
+    await db.rawUpdate("UPDATE recent_items SET time = ? WHERE id = ? ",
+        [DateTime.now().toString(), recentId]);
   }
 
   Future<Database> connect() async {

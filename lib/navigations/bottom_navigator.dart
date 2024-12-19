@@ -1,6 +1,8 @@
+import 'package:damma/models/book_model.dart';
 import 'package:damma/views/damma_books.dart';
 import 'package:damma/views/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class NavigationController extends StatefulWidget {
   @override
@@ -19,7 +21,16 @@ class _NavigationControllerState extends State<NavigationController> {
     DammBook(),
     Center(child: Text("Audio Screen", style: TextStyle(fontSize: 24))),
     Center(child: Text("Book Marks", style: TextStyle(fontSize: 24))),
-    Center(child: Text("Settings", style: TextStyle(fontSize: 24))),
+    Center(
+        child: FloatingActionButton(
+      onPressed: () async {
+        BookModel model = BookModel();
+        Database db = await model.connect();
+        await model.sampleDataInsertion(db);
+        
+      },
+      child: Text("Add Sample Data"),
+    )),
   ];
 
   @override
@@ -50,7 +61,8 @@ class _NavigationControllerState extends State<NavigationController> {
             _currentIndex = index;
           });
         },
-        selectedItemColor: Colors.brown, // Color for the selected icon and label
+        selectedItemColor:
+            Colors.brown, // Color for the selected icon and label
         unselectedItemColor: Colors.grey,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

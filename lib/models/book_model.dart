@@ -2,8 +2,9 @@ import 'package:sqflite/sqflite.dart';
 
 class BookModel {
   Future<Map<String, dynamic>> getBookById(Database db, id) async {
-    List<Map<String, Object?>> book =
-        await db.rawQuery("SELECT book.*, recent_items.time FROM book, recent_items WHERE book.id = ? AND book.id = recent_items.bookID LIMIT 1", [id]);
+    List<Map<String, Object?>> book = 
+    // await db.rawQuery("SELECT * FROM book");
+    await db.rawQuery("SELECT * FROM book, recent_items WHERE book.id = ? AND book.id = recent_items.bookID LIMIT 1", [id]);
     return book[0];
   }
 
